@@ -7,6 +7,7 @@
 
 namespace InfiniteRadio
 {
+    using System;
     using Exiled.API.Features;
 
     /// <summary>
@@ -14,35 +15,27 @@ namespace InfiniteRadio
     /// </summary>
     public class Plugin : Plugin<Config>
     {
-        private static readonly Plugin InstanceValue = new Plugin();
+        private EventHandlers eventHandlers;
 
-        private Plugin()
-        {
-        }
+        /// <inheritdoc />
+        public override string Author => "Build";
 
-        /// <summary>
-        /// Gets the only existing instance of the <see cref="Plugin"/> class.
-        /// </summary>
-        public static Plugin Instance { get; } = InstanceValue;
-
-        /// <summary>
-        /// Gets an instance of the <see cref="InfiniteRadio.EventHandlers"/> class.
-        /// </summary>
-        public EventHandlers EventHandlers { get; private set; }
+        /// <inheritdoc />
+        public override Version RequiredExiledVersion { get; } = new Version(5, 0, 0);
 
         /// <inheritdoc />
         public override void OnEnabled()
         {
-            EventHandlers = new EventHandlers();
-            Exiled.Events.Handlers.Player.UsingRadioBattery += EventHandlers.OnUsingRadioBattery;
+            eventHandlers = new EventHandlers();
+            Exiled.Events.Handlers.Player.UsingRadioBattery += eventHandlers.OnUsingRadioBattery;
             base.OnEnabled();
         }
 
         /// <inheritdoc />
         public override void OnDisabled()
         {
-            Exiled.Events.Handlers.Player.UsingRadioBattery -= EventHandlers.OnUsingRadioBattery;
-            EventHandlers = null;
+            Exiled.Events.Handlers.Player.UsingRadioBattery -= eventHandlers.OnUsingRadioBattery;
+            eventHandlers = null;
             base.OnDisabled();
         }
     }
